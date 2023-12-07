@@ -1,24 +1,36 @@
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import ProductCards from "./components/productCards";
 import Button from "./components/ui/Button";
 import Modal from "./components/ui/Modal";
 import { formInputsList, productList } from "./data";
 import Input from "./components/ui/Input";
 
-const App = () => {
+const App = () =>  {
   /* State */
+  const [product, setProduct] = useState({
+    title: "",
+    description: "",
+    imageURL: "",
+    price: "",
+  });
   const [isOpen, setIsOpen] = useState(false);
   /* State */
 
   /* handler */
 
-  function closeModal() {
-    setIsOpen(false);
-  }
+  const closeModal = () => setIsOpen(false);
 
-  function openModal() {
-    setIsOpen(true);
-  }
+  const openModal = () => setIsOpen(true);
+
+  const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    const {value,name} = event.target;
+    setProduct({
+      ...product,
+      [name]:value
+    })
+
+  };
+
   /* handler */
 
   /* render */
@@ -34,7 +46,21 @@ const App = () => {
       >
         {input.label}
       </label>
-      <Input id={input.id} type="text" name={input.name} />
+      {/* LINE BELOW IS WRONG NOW FIX IT! */}
+      {/*       <Input
+        id={input.id}
+        type="text"
+        name={input.name}
+        onChange={onChangeHandler}
+        value={product[]}
+      /> */}
+      <Input
+        id={input.id}
+        type="text"
+        name={input.name}
+        onChange={onChangeHandler}
+        value={""}
+      />
     </div>
   ));
   return (
@@ -64,7 +90,8 @@ const App = () => {
               </Button>
               <Button
                 className="bg-red-700 hover:bg-red-800"
-                onClick={() => closeModal()}>
+                onClick={() => closeModal()}
+              >
                 Cancel
               </Button>
             </div>
