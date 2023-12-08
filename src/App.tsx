@@ -8,7 +8,7 @@ import { IProduct } from "./interfaces";
 import { productValidation } from "./validation";
 import ErrorMessage from "./components/ErrorMessage";
 import CircleColor from "./components/CircleColor";
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid } from "uuid";
 import Select from "./components/ui/Select";
 
 const App = () => {
@@ -32,6 +32,7 @@ const App = () => {
     description: "",
     imageURL: "",
     price: "",
+    colors: "",
   });
   const [tempColors, setTempColors] = useState<string[]>([]);
   /* State */
@@ -47,22 +48,27 @@ const App = () => {
     setProduct({
       ...product,
       [name]: value,
+      colors: tempColors,
     });
 
     setErrors({
       ...errors,
       [name]: "",
+      colors: "",
     });
   };
 
   const submitHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const { title, description, price, imageURL } = product;
+    let { colors } = product;
+    colors = tempColors;
     const errors = productValidation({
       title,
       description,
       price,
       imageURL,
+      colors,
     });
 
     const noErrorMsg =
@@ -72,7 +78,11 @@ const App = () => {
       setErrors(errors);
       return;
     }
-    setProducts((prev) => [{...product , id:uuid(),colors:tempColors},...prev]);
+    console.log(errors);
+    setProducts((prev) => [
+      { ...product, id: uuid(), colors: tempColors },
+      ...prev,
+    ]);
     setProduct(defaultProduct);
     setTempColors([]);
     closeModal();
@@ -113,11 +123,16 @@ const App = () => {
       color={color}
       key={color}
       onClick={() => {
+        setErrors({
+          ...errors,
+          colors: "",
+        });
         if (tempColors.includes(color)) {
           setTempColors(tempColors.filter((item) => item != color));
           return;
         }
         setTempColors((prev) => [...prev, color]);
+        setProduct((prev) => ({ ...prev, colors: tempColors }));
       }}
     />
   ));
@@ -143,7 +158,7 @@ const App = () => {
         >
           <form className="space-y-3" onSubmit={submitHandler}>
             {renderFormInputsList}
-            <Select/>
+            <Select />
             <div className="flex space-x-1 items-center">{renderColors}</div>
             <div className="flex space-x-1 items-center flex-wrap">
               {tempColors.map((color) => (
@@ -156,6 +171,7 @@ const App = () => {
                 </span>
               ))}
             </div>
+            <ErrorMessage msg={errors["colors"]} />
             <div className="flex space-x-3">
               <Button className="bg-indigo-700 hover:bg-indigo-800">
                 Submit
