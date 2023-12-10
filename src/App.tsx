@@ -2,7 +2,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import ProductCards from "./components/productCards";
 import Button from "./components/ui/Button";
 import Modal from "./components/ui/Modal";
-import { colors, formInputsList, productList } from "./data";
+import { categories, colors, formInputsList, productList } from "./data";
 import Input from "./components/ui/Input";
 import { IProduct } from "./interfaces";
 import { productValidation } from "./validation";
@@ -35,6 +35,8 @@ const App = () => {
     colors: "",
   });
   const [tempColors, setTempColors] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+
   /* State */
 
   /* handler */
@@ -80,7 +82,7 @@ const App = () => {
     }
     console.log(errors);
     setProducts((prev) => [
-      { ...product, id: uuid(), colors: tempColors },
+      { ...product, id: uuid(), colors: tempColors, category: selectedCategory },
       ...prev,
     ]);
     setProduct(defaultProduct);
@@ -158,7 +160,7 @@ const App = () => {
         >
           <form className="space-y-3" onSubmit={submitHandler}>
             {renderFormInputsList}
-            <Select />
+            <Select selected={selectedCategory} setSelected={setSelectedCategory} />
             <div className="flex space-x-1 items-center">{renderColors}</div>
             <div className="flex space-x-1 items-center flex-wrap">
               {tempColors.map((color) => (
